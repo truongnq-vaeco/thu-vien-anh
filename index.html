@@ -60,30 +60,31 @@
   #pvImg.fade{opacity:.2}
   #pvHint{color:#aaa;font-size:14px;padding:24px;text-align:center}
   /* Thống kê */
-  .stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
   .zone{border-radius:12px;overflow:hidden;border:1px solid var(--line)}
-  .zone h3{margin:0;padding:8px 10px;font-size:13px;letter-spacing:.4px;color:#fff;text-align:center}
+  .zone h3{margin:0;padding:5px 8px;font-size:12px;letter-spacing:.4px;color:#fff;text-align:center}
   .zone.free h3{background:#15803d}
   .zone.limit h3{background:#b91c1c}
-  .zone .cell{display:flex;justify-content:space-between;align-items:center;padding:9px 10px;border-top:1px solid var(--line);cursor:pointer}
+  .zone .cell{display:flex;justify-content:space-between;align-items:center;padding:5px 9px;border-top:1px solid var(--line);cursor:pointer}
   .zone .cell:first-of-type{border-top:0}
-  .zone .cell span{font-size:13px;color:var(--muted)}
-  .zone .cell span small{display:block;font-size:10px;opacity:.8}
-  .zone .cell b{font-size:22px;line-height:1}
+  .zone .cell span{font-size:12px;color:var(--muted)}
+  .zone .cell span small{font-size:10px;opacity:.8;margin-left:4px}
+  .zone .cell b{font-size:18px;line-height:1}
   .zone.free .cell b{color:#15803d}
   .zone.limit .cell b{color:#b91c1c}
   .zone .cell.on{background:var(--hi)}
-  .zone .sum{display:flex;justify-content:space-between;padding:7px 10px;background:#f7f8fa;border-top:1px solid var(--line);font-size:12px;font-weight:600}
-  .grand{margin-top:10px;border:1px solid var(--line);border-radius:12px;overflow:hidden}
-  .grand h3{margin:0;padding:8px 10px;font-size:13px;letter-spacing:.4px;color:#fff;background:var(--head);text-align:center}
+  .zone .sum{display:flex;justify-content:space-between;padding:4px 9px;background:#f7f8fa;border-top:1px solid var(--line);font-size:12px;font-weight:600}
+  .grand{margin-top:8px;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .grand h3{margin:0;padding:5px 8px;font-size:12px;letter-spacing:.4px;color:#fff;background:var(--head);text-align:center}
   .gRow{display:grid;grid-template-columns:1fr 1fr 1fr}
-  .gRow div{padding:9px 6px;text-align:center;border-left:1px solid var(--line)}
+  .gRow div{padding:5px 6px;display:flex;align-items:center;justify-content:center;gap:6px;text-align:center;border-left:1px solid var(--line)}
   .gRow div:first-child{border-left:0}
-  .gRow span{display:block;font-size:12px;color:var(--muted);margin-bottom:3px}
-  .gRow b{font-size:22px;color:var(--head)}
+  .gRow span{font-size:12px;color:var(--muted)}
+  .gRow b{font-size:18px;color:var(--head)}
   .gRow .gAll{background:var(--hi)}
   .gRow .gAll b{color:var(--accent)}
-  #statOther{font-size:12px;color:var(--muted);margin-top:8px;text-align:right}
+  #statOther{font-size:11px;color:var(--muted);margin-top:5px;text-align:right}
+  #statOther:empty{display:none}
   #chipFilter{display:none;align-items:center;gap:6px;margin-bottom:10px;font-size:13px;background:var(--hi);color:var(--accent);padding:6px 10px;border-radius:8px}
   #chipFilter.show{display:flex}
   #chipFilter button{margin-left:auto;padding:4px 10px;font-size:12px}
@@ -215,7 +216,7 @@
 
   <!-- 5. Nhãn tên các file hiện có -->
   <section class="card">
-    <p class="label">Các file hiện có <span class="badge" id="chipCount">0</span></p>
+    <p class="label">Tổng số đơn vị tìm được <span class="badge" id="chipCount">0</span></p>
     <div id="chipFilter"><span id="chipFilterText"></span><button id="chipFilterClear" class="ghost">✕ Bỏ lọc</button></div>
     <div class="sortbar">
       <button id="sortName" class="on">Theo tên ↑</button>
@@ -429,7 +430,6 @@ function renderStats() {
   $('statTotal').textContent = all.length;
   const other = all.length - classified - skipped;
   const notes = [];
-  if (skipped > 0) notes.push(`Phương tiện có "${EXCLUDE_VEHICLE}" (không tính): ${skipped} file`);
   if (other > 0) notes.push(`Không thuộc nhóm nào: ${other} file`);
   $('statOther').innerHTML = '';
   notes.forEach(t => { const d = document.createElement('div'); d.textContent = t; $('statOther').append(d); });
@@ -459,7 +459,7 @@ function renderChips() {
     const head = document.createElement('div'); head.className = 'unitHead';
     const name = document.createElement('b'); name.textContent = u;
     const uc = document.createElement('div'); uc.className = 'uc';
-    [['Người', people], ['Phương tiện', vehicle], ['File', files.length]].forEach(([l, n]) => {
+    [['Người', people], ['Phương tiện', vehicle], ['Tổng', people + vehicle]].forEach(([l, n]) => {
       const sp = document.createElement('span');
       sp.append(l + ': ');
       const em = document.createElement('em'); em.textContent = n; sp.append(em);
@@ -472,7 +472,7 @@ function renderChips() {
     frag.append(wrap);
   });
   box.append(frag);
-  finishChips(list);
+  finishChips(list, unitOrder.length);
 }
 
 function makeChip(f) {
@@ -490,8 +490,8 @@ function makeChip(f) {
   }
 }
 
-function finishChips(list) {
-  $('chipCount').textContent = chipFilter ? `${list.length} / ${all.length}` : all.length;
+function finishChips(list, unitCount) {
+  $('chipCount').textContent = unitCount;
   $('sortName').classList.toggle('on', sortBy === 'name');
   $('sortDate').classList.toggle('on', sortBy === 'date');
   $('sortName').textContent = 'Theo tên' + (sortBy === 'name' ? (sortAsc ? ' ↑' : ' ↓') : '');
