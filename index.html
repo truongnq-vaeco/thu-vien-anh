@@ -2,6 +2,8 @@
 <html lang="vi">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#24486a">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -55,32 +57,50 @@
   #pvNotFound{width:100%;background:#dc2626;color:#fff;text-align:center;font-weight:700;font-size:17px;padding:12px;letter-spacing:.3px}
   #empty{color:#dc2626;font-weight:600}
   #pvMeta{font-size:12px;color:var(--muted);margin:0 0 10px;word-break:break-all}
+  #pvMeta:empty{display:none}
+  #pvInfo{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;margin:4px 0 10px;font-size:14px}
+  #pvInfo:empty{display:none}
+  #pvInfo dt{color:var(--muted)}
+  #pvInfo dd{margin:0;font-weight:700;word-break:break-word}
+  #pvInfo dd.none{color:#b0b5bd;font-weight:400}
+  .chip .ico{margin-right:5px;font-size:13px}
+  #preview{position:relative}
+  #termTag{position:absolute;top:12px;right:12px;border:1px solid #cfd4db;border-radius:6px;padding:2px 8px;font-size:12px;color:#9aa0a8;background:#fff}
+  #pvName{padding-right:84px}
+  .expWarn{display:inline-block;margin-left:8px;padding:1px 8px;border-radius:6px;background:#dc2626;color:#fff;font-size:12px;font-weight:700}
+  .zone .cell.f2row{padding:3px 9px;background:#fafbfc}
+  .zone .cell.f2row span{font-size:12px;font-weight:500}
+  .zone .cell.f2row b{font-size:13px}
   #pvWrap{background:#111;border-radius:10px;min-height:200px;display:flex;align-items:center;justify-content:center;overflow:hidden}
   #pvImg{width:100%;max-height:70vh;object-fit:contain;display:block;cursor:zoom-in;transition:opacity .25s}
+  .pv2Label{margin:12px 0 6px;font-size:13px;font-weight:600;color:var(--muted)}
+  .pv2Wrap{background:#111;border-radius:10px;min-height:160px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  #pv2Img{width:100%;max-height:70vh;object-fit:contain;display:block;cursor:zoom-in;transition:opacity .25s}
+  #pv2Img.fade{opacity:.2}
   #pvImg.fade{opacity:.2}
   #pvHint{color:#aaa;font-size:14px;padding:24px;text-align:center}
   /* Thống kê */
   .stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
   .zone{border-radius:12px;overflow:hidden;border:1px solid var(--line)}
-  .zone h3{margin:0;padding:5px 8px;font-size:12px;letter-spacing:.4px;color:#fff;text-align:center}
+  .zone h3{margin:0;padding:7px 8px;font-size:14px;font-weight:800;letter-spacing:.4px;color:#fff;text-align:center}
   .zone.free h3{background:#15803d}
   .zone.limit h3{background:#b91c1c}
-  .zone .cell{display:flex;justify-content:space-between;align-items:center;padding:5px 9px;border-top:1px solid var(--line);cursor:pointer}
+  .zone .cell{display:flex;justify-content:space-between;align-items:center;padding:7px 10px;border-top:1px solid var(--line);cursor:pointer}
   .zone .cell:first-of-type{border-top:0}
-  .zone .cell span{font-size:12px;color:var(--muted)}
+  .zone .cell span{font-size:14px;font-weight:600;color:var(--text)!important;color:var(--muted)}
   .zone .cell span small{font-size:10px;opacity:.8;margin-left:4px}
-  .zone .cell b{font-size:18px;line-height:1}
+  .zone .cell b{font-size:19px;font-weight:800;line-height:1}
   .zone.free .cell b{color:#15803d}
   .zone.limit .cell b{color:#b91c1c}
   .zone .cell.on{background:var(--hi)}
-  .zone .sum{display:flex;justify-content:space-between;padding:4px 9px;background:#f7f8fa;border-top:1px solid var(--line);font-size:12px;font-weight:600}
+  .zone .sum{display:flex;justify-content:space-between;padding:6px 10px;font-size:14px!important;background:#f7f8fa;border-top:1px solid var(--line);font-size:12px;font-weight:600}
   .grand{margin-top:8px;border:1px solid var(--line);border-radius:12px;overflow:hidden}
-  .grand h3{margin:0;padding:5px 8px;font-size:12px;letter-spacing:.4px;color:#fff;background:var(--head);text-align:center}
+  .grand h3{margin:0;padding:7px 8px;font-size:14px;font-weight:800;letter-spacing:.4px;color:#fff;background:var(--head);text-align:center}
   .gRow{display:grid;grid-template-columns:1fr 1fr 1fr}
   .gRow div{padding:5px 6px;display:flex;align-items:center;justify-content:center;gap:6px;text-align:center;border-left:1px solid var(--line)}
   .gRow div:first-child{border-left:0}
-  .gRow span{font-size:12px;color:var(--muted)}
-  .gRow b{font-size:18px;color:var(--head)}
+  .gRow span{font-size:14px;font-weight:600;color:var(--text)}
+  .gRow b{font-size:19px;font-weight:800;color:var(--head)}
   .gRow .gAll{background:var(--hi)}
   .gRow .gAll b{color:var(--accent)}
   #statOther{font-size:11px;color:var(--muted);margin-top:5px;text-align:right}
@@ -89,6 +109,28 @@
   #chipFilter.show{display:flex}
   #chipFilter button{margin-left:auto;padding:4px 10px;font-size:12px}
   /* Nhãn tên file */
+  .sub{margin-top:10px;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .sub summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:#f3f5f8;font-size:13px;font-weight:700;color:var(--head);letter-spacing:.3px}
+  .sub summary::-webkit-details-marker{display:none}
+  .sub summary::after{content:'▾ Xem';font-size:12px;font-weight:600;color:var(--accent)}
+  .sub[open] summary::after{content:'▴ Thu gọn'}
+  .sub[open] summary{border-bottom:1px solid var(--line)}
+  .sub .body{padding:8px}
+  .sub h4{margin:0 0 6px;font-size:13px;color:var(--head);letter-spacing:.3px}
+  .sub table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:13px;table-layout:fixed}
+  .sub th,.sub td{padding:6px 4px;text-align:center;border-top:1px solid var(--line);border-left:1px solid var(--line)}
+  .sub tr:first-child th{border-top:0}
+  .sub th:first-child,.sub td:first-child{border-left:0}
+  .sub th{background:#f7f8fa;font-size:11px;color:var(--muted);font-weight:600}
+  .sub th.free{background:#15803d;color:#fff}
+  .sub th.limit{background:#b91c1c;color:#fff}
+  .sub td.rl{text-align:left;padding-left:8px;font-size:12px;width:31%}
+  .sub td.rl small{display:block;font-size:10px;color:var(--muted)}
+  .sub td.n{font-size:15px;font-weight:600;cursor:pointer}
+  .sub td.n.free{color:#15803d}
+  .sub td.n.limit{color:#b91c1c}
+  .sub td.n.zero{color:#c0c4cc;cursor:default}
+  .sub td.n.on{background:var(--hi);box-shadow:inset 0 0 0 2px var(--accent)}
   .sortbar{display:flex;gap:8px;margin-bottom:10px}
   .sortbar button{flex:1;padding:9px 10px;font-size:14px;background:#eef0f3;color:var(--text)}
   .sortbar button.on{background:var(--accent);color:#fff}
@@ -144,7 +186,7 @@
 <header>
   <img class="logo" src="icon-192.png?v=1" alt="Security System AMO">
   <div class="titles">
-    <h1>CHƯƠNG TRÌNH KIỂM SOÁT AN NINH NỘI BÀI</h1>
+    <h1>NỘI BÀI SS</h1>
     <p>Tra cứu ảnh theo mã / tên</p>
   </div>
   <button id="lockBtn" class="lockBtn" aria-label="Khóa">🔒</button>
@@ -154,7 +196,7 @@
 <div id="lock">
   <form id="lockBox" autocomplete="off">
     <img src="icon-192.png?v=1" alt="Security System AMO">
-    <h2>CHƯƠNG TRÌNH KIỂM SOÁT AN NINH</h2>
+    <h2>NỘI BÀI SS</h2>
     <p>Nhập mật khẩu để sử dụng</p>
     <div class="pwRow">
       <input id="pw" type="password" placeholder="Mật khẩu" autocomplete="current-password" enterkeyhint="go">
@@ -191,11 +233,18 @@
   <!-- 3. Ảnh -->
   <section class="card" id="preview">
     <p id="pvName">—</p>
+    <span id="termTag" hidden></span>
     <p id="pvMeta"></p>
+    <dl id="pvInfo"></dl>
     <div id="pvWrap">
       <img id="pvImg" alt="" hidden>
       <div id="pvNotFound" hidden>⚠ KHÔNG TÌM THẤY ẢNH PHÙ HỢP</div>
       <div id="pvHint">Chưa có ảnh để hiển thị</div>
+    </div>
+    <!-- Ảnh F2 (file cùng tên có "_2"), chỉ hiện khi có -->
+    <div id="pv2Box" hidden>
+      <p class="pv2Label">Ảnh 2</p>
+      <div class="pv2Wrap"><img id="pv2Img" alt=""></div>
     </div>
   </section>
 
@@ -212,16 +261,13 @@
       </div>
     </div>
     <div id="statOther"></div>
+    <div id="subStats"></div>
   </section>
 
   <!-- 5. Nhãn tên các file hiện có -->
   <section class="card">
     <p class="label">Tổng số đơn vị tìm được <span class="badge" id="chipCount">0</span></p>
     <div id="chipFilter"><span id="chipFilterText"></span><button id="chipFilterClear" class="ghost">✕ Bỏ lọc</button></div>
-    <div class="sortbar">
-      <button id="sortName" class="on">Theo tên ↑</button>
-      <button id="sortDate">Theo thời gian</button>
-    </div>
     <div id="chips"></div>
   </section>
 </main>
@@ -246,7 +292,7 @@
 /* ====== CẤU HÌNH ======
    Dán chuỗi mã hóa tạo từ trang ma-hoa.html vào giữa hai dấu nháy.
    (API key và Folder ID nằm bên trong chuỗi này, chỉ giải được khi có mật khẩu) */
-const ENCRYPTED_CONFIG = 'v1.210000.ddTY_U2ZJjViICM0lPF0DA.coehDMAljVbKdQRC.hnSW-TjCpKd7Bwe0xSwDH5jJQQjOLnT39YnVMjWwFJrSVn-CX4IZ2FPAeZMdQmFzozsqk1wT2u4MsLsPxa300-dS-LuPge9Eaq11gf48R3UxR_1XmzycjEWMyxcRi1SpMWiPFjeBow';
+const ENCRYPTED_CONFIG = 'v1.210000.Jq7uBonT5TvlU7zaIFL6yQ.C1v2CBbo2o_SPFUJ.BJmUiry40dLJnRYjoeihywxC-Hde8mR_JVhdUmWLSTnu4MKX19BCz64gQMrywrGCemfgqTWufksYALW7WWiQFbD-P-EQ4Byg5BdGZ04eyYIaWlEns5-s6Cp0eknvhF59lLG_gTw3FA';
 const SCAN_START = 7;    // Sau khi quét: lấy từ ký tự thứ 7 trở đi
 /* ============================================================ */
 
@@ -258,9 +304,96 @@ const norm = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[�
 // Tên hiển thị: phần trước dấu "-", viết HOA
 const shortName = n => (n.includes('-') ? n.split('-')[0] : n.replace(/\.[^.]+$/, '')).trim().toLocaleUpperCase('vi');
 const pad = n => String(n).padStart(2, '0');
+const F2_MARK = '_2';
+const APP_VERSION = 'v28.10-e';   // đổi mỗi lần sửa để kiểm tra điện thoại đã nhận bản mới chưa
+let loadInfo = '';
+
+/* Đọc thông tin nằm trong tên file (tìm lần lượt từ trái qua phải):
+   te…tena = Số Tel, tena…nama = Tên người, nama…mati = Mã, mati…ti-- = Thời gian
+   VD: 3bhcm55-20261026160852te0917111315tenale minh quynamavae00133mati2026-10-26t16-08-35ti--kt */
+function fileFields(name) {
+  const em = name.match(EXP_RE);
+  const expiry = em ? parseDay(em[1]) : null;    // ngày hết hạn (Date) hoặc null
+  const expRaw = em ? em[1].trim() : '';
+  const base = name.replace(/\.[^.]+$/, '');
+  const off = base.indexOf('-') + 1;            // bỏ phần số thẻ phía trước
+  const raw = base.slice(off), low = raw.toLowerCase();
+  let cur = 0;
+  // Số Tel: nằm giữa "state" và "tena". Tên file kiểu cũ (không có "state"): giữa "te" và "tena"
+  let tel = '';
+  const iState = low.indexOf('state');
+  if (iState >= 0) {
+    const j = low.indexOf('tena', iState + 5);
+    if (j >= 0) { tel = raw.slice(iState + 5, j).trim(); cur = j; }
+  }
+  const take = (a, b) => {
+    const i = low.indexOf(a, cur);
+    if (i < 0) return '';
+    const j = low.indexOf(b, i + a.length);
+    if (j < 0) return '';
+    cur = j;
+    return raw.slice(i + a.length, j).trim();
+  };
+  if (iState < 0) tel = take('te', 'tena');
+  const nm   = take('tena', 'nama');
+  const code = take('nama', 'mati');
+  let time   = take('mati', 'ti--');
+  let entry  = null;                           // thời điểm vào (Date) để tính thời gian trong công ty
+  const m = time.match(/(\d{4})-(\d{1,2})-(\d{1,2})t(\d{1,2})-(\d{1,2})-(\d{1,2})/i);
+  if (m) {
+    time = `${pad(m[4])}:${pad(m[5])}:${pad(m[6])} - ${pad(m[3])}-${pad(m[2])}-${m[1]}`;
+    entry = new Date(+m[1], m[2] - 1, +m[3], +m[4], +m[5], +m[6]);
+  }
+  return { tel, nm, code, time, entry, expiry, expRaw };
+}
+// Đọc ngày: yyyy-mm-dd, yyyymmdd, dd-mm-yyyy (dấu phân cách bất kỳ)
+function parseDay(t) {
+  t = t.trim();
+  let m = t.match(/((?:19|20)\d{2})\D?(\d{1,2})\D?(\d{1,2})/);
+  if (m && t.match(/^\D*(?:19|20)\d{2}/)) return new Date(+m[1], m[2] - 1, +m[3]);
+  m = t.match(/(\d{1,2})\D(\d{1,2})\D((?:19|20)\d{2})/);
+  if (m) return new Date(+m[3], m[2] - 1, +m[1]);
+  return null;
+}
+// Thời gian đã ở trong công ty, VD "10 h" hoặc "1 ngày 6 h"
+function stayText(entry) {
+  const h = Math.max(0, (Date.now() - entry) / 3600e3);
+  return h < 24 ? `${Math.floor(h)} h` : `${Math.floor(h / 24)} ngày ${Math.floor(h % 24)} h`;
+}
+const WARN_DAYS = 14;   // cảnh báo khi hạn thẻ còn từ 14 ngày trở xuống
+function parseInfo(name) {
+  const { tel, nm, code, time, entry, expiry, expRaw } = fileFields(name);
+  const up = v => v.toLocaleUpperCase('vi');
+  const rows = [['Số Tel', up(tel)], ['Tên người', up(nm)], ['Mã', up(code)],
+                ['Thời gian', time ? up(time) + (entry ? ` (${stayText(entry)})` : '') : '']];
+  if (expiry) {
+    const d = expiry;
+    const txt = `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`;
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const left = Math.round((d - today) / 864e5);
+    const warn = left < 0 ? 'ĐÃ HẾT HẠN' : left <= WARN_DAYS ? `SẮP HẾT HẠN (còn ${left} ngày)` : '';
+    rows.push(['Ngày hết hạn', txt, warn]);
+  } else if (expRaw) rows.push(['Ngày hết hạn', up(expRaw)]);
+  return rows.filter(([, v]) => v);   // dòng không có dữ liệu thì ẩn
+}
+function renderInfo(rows) {
+  const dl = $('pvInfo');
+  dl.textContent = '';
+  rows.forEach(([k, v, warn]) => {
+    const dt = document.createElement('dt'); dt.textContent = k + ':';
+    const dd = document.createElement('dd'); dd.textContent = v || '—';
+    if (!v) dd.className = 'none';
+    if (warn) { const w = document.createElement('span'); w.className = 'expWarn'; w.textContent = '⚠ ' + warn; dd.append(w); }
+    dl.append(dt, dd);
+  });
+}
 // Tên đơn vị: phần sau dấu "--" cuối cùng, trước đuôi file. VD: 2b0521-20261021080836--ttdt.jpg → TTDT
 const NO_UNIT = 'CHƯA RÕ ĐƠN VỊ';
-const unitName = n => {
+// Đoạn ngày hết hạn "sta…state" được tách riêng để không lẫn vào các thông tin khác
+const EXP_RE = /sta(.*?)state/i;
+const stripExp = n => n.replace(EXP_RE, '');
+const unitName = n0 => {
+  const n = stripExp(n0);
   const i = n.lastIndexOf('--');
   if (i < 0) return NO_UNIT;
   const u = n.slice(i + 2).replace(/\.[^.]+$/, '').trim().toLocaleUpperCase('vi');
@@ -297,7 +430,39 @@ async function loadFiles() {
     f.timeVN = `${pad(f.date.getHours())}:${pad(f.date.getMinutes())} ${f.dayVN}`;
     f.pre = f.name.trim().slice(0, 2).toLocaleUpperCase('vi');   // 2 ký tự đầu tên file
     f.unit = unitName(f.name);                                    // tên đơn vị sau dấu "--"
+    const fx = fileFields(f.name);
+    f.tel = fx.tel;                                               // có số Tel = thẻ dài hạn
+    f.entry = fx.entry;                                           // thời điểm vào
   });
+  // F2 = file có "_2" trong số thẻ (VD 3BHCM70_2): KHÔNG hiển thị, KHÔNG tính thống kê,
+  // chỉ hiện ảnh bên dưới F1 cùng số thẻ (VD 3BHCM70).
+  // Thẻ bị trùng (cùng số thẻ upload nhiều lần): chỉ giữ file MỚI NHẤT.
+  // Nhận F2 chắc chắn hơn: chuẩn hóa ký tự (gạch dưới/số dạng full-width, khoảng trắng),
+  // số thẻ kết thúc bằng "_2" (hoặc " 2", "-2", ".2")
+  const clean  = t => t.normalize('NFKC').replace(/\s+/g, '').toUpperCase();
+  const F2_RE  = /[_\-.]2$/;
+  const isF2   = f => F2_RE.test(clean(f.short));
+  const baseOf = f => clean(f.short).replace(F2_RE, '');
+  const newestFirst = (a, b) => (b.date - a.date) || b.name.localeCompare(a.name);
+  const f1 = new Map(), f2 = new Map();
+  [...all].sort(newestFirst).forEach(f => {
+    const m = isF2(f) ? f2 : f1, k = baseOf(f);
+    if (!m.has(k)) m.set(k, []);
+    m.get(k).push(f);
+  });
+  const kept = [];
+  let nF2 = 0, nDup = 0;
+  f2.forEach(l => nF2 += l.length);
+  f1.forEach((list, k) => {
+    nDup += list.length - 1;
+    const f = list[0];                       // F1 mới nhất của số thẻ này
+    const pairs = f2.get(k) || [];
+    f.f2 = pairs.find(x => x.unit === f.unit) || pairs[0] || null;   // F2 mới nhất, ưu tiên cùng đơn vị
+    if (f.f2) f.key += ' ' + f.f2.key;       // tìm "..._2" cũng ra F1
+    kept.push(f);
+  });
+  all = kept.sort((a, b) => a.name.localeCompare(b.name, 'vi', { numeric: true }));
+  loadInfo = `Đã ẩn ${nF2} ảnh _2 · bỏ ${nDup} file trùng`;
 }
 
 /* ---------- 1–2. Tìm kiếm ---------- */
@@ -321,14 +486,30 @@ function search() {
 }
 
 /* ---------- 3. Hiển thị ảnh ---------- */
+function showF2(f2) {
+  const box = $('pv2Box'), img = $('pv2Img');
+  if (!f2) { box.hidden = true; img.removeAttribute('src'); return; }
+  box.hidden = false;
+  img.classList.add('fade');
+  img.onerror = () => { img.onerror = null; img.src = fallbackUrl(f2.id); };
+  img.onload = () => img.classList.remove('fade');
+  img.src = bigUrl(f2.id);
+  img.alt = f2.name;
+}
+
 function showFile(f) {
   currentId = f ? f.id : null;
   [...$('list').children].forEach(el => el.classList.toggle('active', f && view[+el.dataset.i] === f));
   document.querySelectorAll('#chips .chip').forEach(el => el.classList.toggle('cur', el.dataset.id === currentId));
   const img = $('pvImg');
   $('pvName').classList.remove('nf');
+  $('pvInfo').textContent = '';
+  // Nhãn góc phải: Dài hạn (có số Tel) / Ngắn hạn (không có số Tel)
+  $('termTag').hidden = !f;
+  if (f) $('termTag').textContent = hasTel(f) ? 'Dài hạn' : 'Ngắn hạn';
   $('pvWrap').classList.remove('nf');
   $('pvNotFound').hidden = true;
+  showF2(f && f.f2);
   if (!f) {
     const q = $('q').value.trim();
     if (all.length && q) {
@@ -351,8 +532,10 @@ function showFile(f) {
     $('pvHint').textContent = all.length ? 'Không có ảnh phù hợp' : 'Chưa có ảnh để hiển thị';
     return;
   }
-  $('pvName').textContent = f.short;
-  $('pvMeta').textContent = `${f.name} · ${f.dayVN}`;
+  // Số thẻ - Tên đơn vị
+  $('pvName').textContent = f.unit && f.unit !== NO_UNIT ? `${f.short} - ${f.unit}` : f.short;
+  $('pvMeta').textContent = '';
+  renderInfo(parseInfo(f.name));
   $('pvHint').hidden = true;
   img.hidden = false;
   img.classList.add('fade');
@@ -383,6 +566,7 @@ const excluded = (f, it) => it.vehicle && f.name.includes(EXCLUDE_VEHICLE);
 const counted  = (f, it) => inGroup(f, it) && !excluded(f, it);
 // Đếm theo đơn vị: dùng đúng nguyên tắc của phần Thống kê (cả 2 khu vực)
 const ALL_ITEMS = STAT_ZONES.flatMap(z => z.items);
+const VEHICLE_PREFIXES = ['3A', '3B', '4A', '4B'];
 const isPerson  = f => ALL_ITEMS.some(it => !it.vehicle && counted(f, it));
 const isVehicle = f => ALL_ITEMS.some(it =>  it.vehicle && counted(f, it));
 
@@ -415,6 +599,23 @@ function renderStats() {
         renderStats(); renderChips();
       };
       zone.append(cell);
+      if (!it.vehicle) {
+        // VPNH và HH: số F1 (người) có file "_2" đi kèm – hiển thị trong (), không cộng vào Tổng
+        const fkey = 'vpnh|' + z.zone;
+        const fmatch = f => !!f.f2 && counted(f, it);
+        const fn = all.filter(fmatch).length;
+        const r = document.createElement('div');
+        r.className = 'cell f2row' + (chipFilter && chipFilter.key === fkey ? ' on' : '');
+        const l = document.createElement('span'); l.textContent = 'VPNH và HH';
+        const v = document.createElement('b'); v.textContent = `(${fn})`;
+        r.append(l, v);
+        r.onclick = () => {
+          chipFilter = chipFilter && chipFilter.key === fkey ? null
+            : { key: fkey, match: fmatch, text: `${z.zone} – VPNH và HH (${it.prefixes.join(', ')} có _2)` };
+          renderStats(); renderChips();
+        };
+        zone.append(r);
+      }
     });
     classified += zoneSum;
     const sum = document.createElement('div'); sum.className = 'sum';
@@ -433,6 +634,68 @@ function renderStats() {
   if (other > 0) notes.push(`Không thuộc nhóm nào: ${other} file`);
   $('statOther').innerHTML = '';
   notes.forEach(t => { const d = document.createElement('div'); d.textContent = t; $('statOther').append(d); });
+  renderSubStats();
+}
+
+/* ---------- Thống kê phụ: loại thẻ + thời gian trong công ty ---------- */
+const HOUR = 3600e3;
+const hasTel = f => /\d/.test(f.tel || '');   // có số Tel = phần giữa "te" và "tena" có chữ số
+const hoursIn = f => f.entry ? (Date.now() - f.entry) / HOUR : null;
+const SUB_TABLES = [
+  // Chỉ đếm thẻ F1 (danh sách `all` đã loại F2 "_2" và thẻ trùng)
+  { title: 'THEO HẠN THẺ', rows: [
+    { label: 'Ngắn', test: f => !hasTel(f) },   // F1 không có số Tel
+    { label: 'Dài',  test: f =>  hasTel(f) } ] },  // F1 có số Tel
+  { title: 'THỜI GIAN TRONG CÔNG TY', rows: [
+    { label: '0h – 9h',       test: f => { const h = hoursIn(f); return h !== null && h < 9; } },
+    { label: '9h – 12h',      test: f => { const h = hoursIn(f); return h !== null && h >= 9 && h < 12; } },
+    { label: '12h – 1 ngày',  test: f => { const h = hoursIn(f); return h !== null && h >= 12 && h < 24; } },
+    { label: 'Trên 1 ngày',   test: f => { const h = hoursIn(f); return h !== null && h >= 24; } } ] }
+];
+
+const subOpen = new Set();   // các bảng đang mở (mặc định thu gọn)
+function renderSubStats() {
+  const box = $('subStats');
+  box.textContent = '';
+  const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+  SUB_TABLES.forEach(tb => {
+    const wrap = el('details', 'sub');
+    wrap.open = subOpen.has(tb.title);              // giữ trạng thái mở/thu gọn khi cập nhật
+    wrap.ontoggle = () => { wrap.open ? subOpen.add(tb.title) : subOpen.delete(tb.title); };
+    wrap.append(el('summary', '', tb.title));
+    const body = el('div', 'body');
+    const table = el('table');
+    const h1 = el('tr'), h2 = el('tr');
+    const corner = el('th', '', ''); corner.rowSpan = 2; h1.append(corner);
+    STAT_ZONES.forEach(z => {
+      const th = el('th', z.cls, z.zone); th.colSpan = z.items.length; h1.append(th);
+      z.items.forEach(it => h2.append(el('th', '', it.label)));
+    });
+    table.append(h1, h2);
+    tb.rows.forEach(r => {
+      const tr = el('tr');
+      const rl = el('td', 'rl', r.label);
+      if (r.note) rl.append(el('small', '', r.note));
+      tr.append(rl);
+      STAT_ZONES.forEach(z => z.items.forEach(it => {
+        const match = f => r.test(f) && counted(f, it);
+        const n = all.filter(match).length;
+        const key = `sub|${tb.title}|${r.label}|${z.zone}|${it.label}`;
+        const td = el('td', `n ${z.cls}${n ? '' : ' zero'}${chipFilter && chipFilter.key === key ? ' on' : ''}`, n);
+        if (n) td.onclick = () => {
+          chipFilter = chipFilter && chipFilter.key === key ? null
+            : { key, match, text: `${r.label} – ${z.zone} – ${it.label}` };
+          renderStats(); renderChips();
+          $('chips').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        };
+        tr.append(td);
+      }));
+      table.append(tr);
+    });
+    body.append(table);
+    wrap.append(body);
+    box.append(wrap);
+  });
 }
 
 function renderChips() {
@@ -480,7 +743,11 @@ function makeChip(f) {
     const c = document.createElement('span');
     c.className = 'chip' + (f.id === currentId ? ' cur' : '');
     c.dataset.id = f.id;
-    c.textContent = f.short;
+    // Biểu tượng: phương tiện cho thẻ 3A, 3B, 4A, 4B; người cho các thẻ còn lại
+    const ico = document.createElement('span');
+    ico.className = 'ico';
+    ico.textContent = VEHICLE_PREFIXES.includes(f.pre) ? '🚗' : '👤';
+    c.append(ico, f.short);
     if (sortBy === 'date') {               // khi xếp theo thời gian thì hiện thêm giờ và ngày
       const s = document.createElement('small');
       s.textContent = f.timeVN;
@@ -492,10 +759,6 @@ function makeChip(f) {
 
 function finishChips(list, unitCount) {
   $('chipCount').textContent = unitCount;
-  $('sortName').classList.toggle('on', sortBy === 'name');
-  $('sortDate').classList.toggle('on', sortBy === 'date');
-  $('sortName').textContent = 'Theo tên' + (sortBy === 'name' ? (sortAsc ? ' ↑' : ' ↓') : '');
-  $('sortDate').textContent = 'Theo thời gian' + (sortBy === 'date' ? (sortAsc ? ' ↑' : ' ↓') : '');
 }
 
 // Bấm lần 1: chọn kiểu sắp xếp; bấm lần nữa: đảo chiều tăng/giảm
@@ -613,10 +876,9 @@ $('chips').addEventListener('click', e => {
   $('preview').scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
 $('chipFilterClear').onclick = () => { chipFilter = null; renderStats(); renderChips(); };
-$('sortName').onclick = () => setSort('name');
-$('sortDate').onclick = () => setSort('date');
 $('scanBtn').onclick = openScanner;
 $('scanClose').onclick = closeScanner;
+$('pv2Img').onclick = () => { $('zoomImg').src = $('pv2Img').src; $('zoom').classList.add('open'); };
 $('pvImg').onclick = () => { if ($('pvWrap').classList.contains('nf')) return; $('zoomImg').src = $('pvImg').src; $('zoom').classList.add('open'); };
 $('zoomClose').onclick = () => $('zoom').classList.remove('open');
 $('toTop').onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -639,7 +901,7 @@ async function refresh() {
     renderChips();
     const diff = before ? all.length - before : 0;
     const t = new Date();
-    $('updated').textContent = `Cập nhật lúc ${pad(t.getHours())}:${pad(t.getMinutes())}:${pad(t.getSeconds())}`
+    $('updated').textContent = `${APP_VERSION} · ${loadInfo} · Cập nhật lúc ${pad(t.getHours())}:${pad(t.getMinutes())}:${pad(t.getSeconds())}`
       + (diff > 0 ? ` · thêm ${diff} file mới` : diff < 0 ? ` · bớt ${-diff} file` : '');
   } catch (err) {
     $('count').textContent = 'Không tải được ảnh: ' + err.message;
