@@ -72,6 +72,20 @@
   #plateMsg:empty{display:none}
   #plateMsg.nf{color:#dc2626}
   #ocrState{font-size:12px;color:var(--muted);margin-top:6px}
+  .speakBar{display:flex;gap:8px;align-items:center;margin-bottom:10px}
+  #speakBtn{flex:1;font-size:15px;padding:10px}
+  #stopBtn{padding:10px 12px}
+  #speakRate{width:auto;padding:6px 8px;font-size:13px}
+  .speakBar .tgl{padding:10px 9px;font-size:13px}
+  .speakBar .tgl.on{background:var(--hi);color:var(--accent)}
+  #speakMsg{margin:-4px 0 10px;color:#b45309;font-size:12px;font-weight:600}
+  .voiceBar{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;margin:-2px 0 10px;font-size:12px;color:var(--muted)}
+  .voiceBar select{width:auto;max-width:100%;padding:6px 8px;font-size:13px}
+  #speakVoice{flex:1;min-width:150px}
+  #voiceTest{padding:6px 10px;font-size:13px}
+  #reportText{background:#f7f8fa;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14px;line-height:1.55;margin-bottom:10px}
+  #reportText .now{background:#fef3c7;border-radius:4px}
+  .voiceWarn{margin-top:8px;color:#b45309;font-size:12px;font-weight:600}
   .chartTop{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px}
   #chartReload{padding:5px 10px;font-size:14px}
   .chartTitle{margin:12px 0 4px;font-size:13px;font-weight:700;color:var(--head)}
@@ -331,6 +345,23 @@
     <details class="sub" id="chartBox">
       <summary>BIỂU ĐỒ 24H QUA</summary>
       <div class="body">
+        <div class="speakBar">
+          <button id="speakBtn">🔊 Tổng hợp</button>
+          <button id="stopBtn" class="ghost" hidden>⏹ Dừng</button>
+          <button id="toggleVoice" class="ghost tgl" type="button" aria-expanded="false" title="Chọn giọng đọc">⚙ Giọng</button>
+          <button id="toggleText" class="ghost tgl" type="button" aria-expanded="false" title="Xem nội dung báo cáo">📄 Chi tiết</button>
+        </div>
+        <div id="speakMsg" hidden></div>
+        <div class="voiceBar" id="voiceBar" hidden>
+          <label for="speakRate">Tốc độ</label>
+          <select id="speakRate" aria-label="Tốc độ đọc"><option value="0.8">Chậm</option><option value="0.9">Hơi chậm</option><option value="1" selected>Vừa</option><option value="1.15">Nhanh</option></select>
+          <label for="speakVoice">Giọng</label>
+          <select id="speakVoice" aria-label="Chọn giọng đọc"></select>
+          <label for="speakPitch">Cao độ</label>
+          <select id="speakPitch" aria-label="Cao độ giọng"><option value="0.9">Trầm</option><option value="1" selected>Thường</option><option value="1.1">Cao</option></select>
+          <button id="voiceTest" class="ghost" type="button">▶ Nghe thử</button>
+        </div>
+        <div id="reportText" hidden>Bấm “🔊 Tổng hợp” để tạo và đọc báo cáo.</div>
         <div class="chartTop"><span id="chartSum"></span><button id="chartReload" class="ghost">🔄</button></div>
         <div class="chartTitle">Lượt ra + vào theo giờ (24 tiếng qua)</div>
         <div class="chartLeg"><span><i style="background:#2563eb"></i>Vào</span><span><i style="background:#f59e0b"></i>Ra</span></div>
@@ -1662,7 +1693,7 @@ const norm = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[�
 const shortName = n => (n.includes('-') ? n.split('-')[0] : n.replace(/\.[^.]+$/, '')).trim().toLocaleUpperCase('vi');
 const pad = n => String(n).padStart(2, '0');
 const F2_MARK = '_2';
-const APP_VERSION = 'v25.11-a';   // đổi mỗi lần sửa để kiểm tra điện thoại đã nhận bản mới chưa
+const APP_VERSION = 'v25.11-e';   // đổi mỗi lần sửa để kiểm tra điện thoại đã nhận bản mới chưa
 let loadInfo = '';
 
 /* Đọc thông tin nằm trong tên file (tìm lần lượt từ trái qua phải):
@@ -2615,6 +2646,7 @@ function renderCharts(data) {
   };
   data.recs.forEach(r => { add(r.tin, 'vin', r.dept); add(r.tout, 'vout', r.dept); });
   const totIn = bins.reduce((a, b) => a + b.vin, 0), totOut = bins.reduce((a, b) => a + b.vout, 0);
+  lastAgg = { start, end, bins, byDept, totIn, totOut };
 
   $('chartSum').innerHTML = '';
   const sum = $('chartSum');
@@ -2713,6 +2745,154 @@ async function loadCharts(force) {
 }
 $('chartBox').addEventListener('toggle', () => { if ($('chartBox').open) loadCharts(false); });
 $('chartReload').onclick = () => loadCharts(true);
+
+/* ================= BÁO CÁO TỔNG HỢP BẰNG GIỌNG NÓI ================= */
+const SITE_SPOKEN = 'Nội Bài';   // tên đọc ở đầu báo cáo
+// Tên đọc của các mã đơn vị (từ file ten_don_vi.xlsx). Muốn thêm/sửa: thêm dòng "MÃ": "Tên đọc"
+const UNIT_NAMES = {
+  "AN": "AN NINH",
+  "ATCL": "BAN AN TOÀN CHẤT LƯỢNG",
+  "BGD": "BAN GIÁM ĐỐC CÔNG TY",
+  "CNBDNT": "TRUNG TÂM BẢO DƯỠNG NỘI THẤT",
+  "CNDN": "CHI NHÁNH ĐÀ NẴNG",
+  "CNHCM": "CHI NHÁNH KHU VỰC MIỀN NAM",
+  "CUVT": "TRUNG TÂM CUNG ỨNG PHỤ TÙNG VẬT TƯ",
+  "DBCL": "BAN AN TOÀN CHẤT LƯỢNG",
+  "DHBD": "TRUNG TÂM ĐIỀU HÀNH BẢO DƯỠNG",
+  "KHKD": "BAN KẾ HOẠCH KINH DOANH",
+  "KT": "BAN KỸ THUẬT",
+  "NGTHCM": "TRUNG TÂM BẢO DƯỠNG NGOẠI TRƯỜNG HỒ CHÍ MINH",
+  "NGTHN": "TRUNG TÂM BẢO DƯỠNG NGOẠI TRƯỜNG HÀ NỘI",
+  "NTHCM": "TRUNG TÂM BẢO DƯỠNG NỘI TRƯỜNG HỒ CHÍ MINH",
+  "NTHN": "TRUNG TÂM BẢO DƯỠNG NỘI TRƯỜNG HÀ NỘI",
+  "PC": "BAN PHÁP CHẾ",
+  "PVBD": "TRUNG TÂM PHỤC VỤ BẢO DƯỠNG",
+  "HAI_AU": "HÃNG HÀNG KHÔNG HẢI ÂU",
+  "TCKT": "BAN TÀI CHÍNH KẾ TOÁN",
+  "TCNL": "BAN TỔ CHỨC NHÂN LỰC",
+  "THANG_LOI": "CÔNG TY THẮNG LỢI",
+  "TTDT": "TRUNG TÂM ĐÀO TẠO",
+  "VP": "VĂN PHÒNG CÔNG TY",
+  "VPCT": "VĂN PHÒNG CÔNG TY",
+  "GAL": "CÔNG TY GAL",
+  "LAM_GIANG": "CÔNG TY LÂM GIANG",
+  "BLUE_SKY": "CÔNG TY BẦU TRỜI XANH BLUE SKY",
+  "AIRIMEX": "CÔNG TY AIRIMEX",
+  "SPA": "HÃNG HÀNG KHÔNG PHÚ QUỐC MẶT TRỜI",
+  "SUN_AIR": "HÃNG HÀNG KHÔNG SUN AIR"
+};
+// Viết thường cho tự nhiên (chữ in hoa toàn bộ dễ bị đọc thành từng chữ cái)
+const niceName = t => { t = t.toLocaleLowerCase('vi'); return t.charAt(0).toLocaleUpperCase('vi') + t.slice(1); };
+const spokenUnit = code => UNIT_NAMES[code] ? niceName(UNIT_NAMES[code])
+  : code.replace(/_/g, ' ').split(' ').map(w => w.length <= 6 ? w.split('').join(' ') : w).join(' ');   // mã chưa có tên: đọc từng chữ cái
+
+let lastAgg = null;   // số liệu biểu đồ 24h gần nhất (do renderCharts lưu lại)
+
+function buildReport() {
+  const a = lastAgg, now = new Date(), S = [];
+  S.push(`Báo cáo tổng hợp tình hình an ninh ${SITE_SPOKEN}, lúc ${now.getHours()} giờ ${now.getMinutes()}, ngày ${now.getDate()} tháng ${now.getMonth() + 1}.`);
+  const tot = a.totIn + a.totOut;
+  S.push(`Trong 24 giờ qua có ${tot} lượt ra vào, gồm ${a.totIn} lượt vào và ${a.totOut} lượt ra.`);
+  const peak = list => list.reduce((b, x) => (x.vin + x.vout > (b ? b.vin + b.vout : 0) ? x : b), null);
+  const am = peak(a.bins.filter(b => b.h < 12)), pm = peak(a.bins.filter(b => b.h >= 12));
+  const ptxt = p => p ? `${p.h} giờ, với ${p.vin + p.vout} lượt` : 'không có lượt nào';
+  S.push(`Giờ cao điểm buổi sáng là ${ptxt(am)}, và buổi chiều là ${ptxt(pm)}.`);
+  // Đơn vị có khách/phương tiện ra vào trong 24 giờ (theo his.csv) + 3 đơn vị nhiều lượt nhất, kèm tỉ lệ %
+  const pct = n => tot ? Math.round(n / tot * 100) : 0;
+  const top = [...a.byDept.entries()].sort((x, y) => y[1] - x[1]).slice(0, 3);
+  if (top.length) S.push(`Xin báo cáo trong 24 giờ qua tổng cộng có ${a.byDept.size} đơn vị có khách và phương tiện, và ${['', 'đơn vị', 'hai đơn vị', 'ba đơn vị'][top.length]} nhiều lượt nhất: ` +
+    top.map(([d, n]) => `${spokenUnit(d)} ${n} lượt chiếm ${pct(n)} phần trăm`).join(', ') + '.');
+  else S.push('Xin báo cáo trong 24 giờ qua không có đơn vị nào có khách và phương tiện ra vào.');
+  // Số liệu hiện tại theo khung Thống kê
+  const zc = z => {
+    const p = z.items.find(it => !it.vehicle), v = z.items.find(it => it.vehicle);
+    const pp = all.filter(f => counted(f, p)), vv = all.filter(f => counted(f, v));
+    return { pp, vv, people: pp.length, veh: vv.length, vpnh: all.filter(f => f.f2 && counted(f, p)).length };
+  };
+  const hc = zc(STAT_ZONES.find(z => z.cls === 'limit')), khc = zc(STAT_ZONES.find(z => z.cls === 'free'));
+  S.push(`Hiện tại trong khu vực hạn chế: ${hc.people} người, ${hc.veh} phương tiện, ${hc.vpnh} vật phẩm nguy hiểm và hàng hóa. Khu vực không hạn chế: ${khc.people} người, ${khc.veh} phương tiện.`);
+  const units = new Set([...hc.pp, ...hc.vv, ...khc.pp, ...khc.vv].map(f => f.unit).filter(u => u && u !== NO_UNIT));
+  S.push(`Báo cáo như vậy hiện tại đang có ${hc.people + khc.people} người và ${hc.veh + khc.veh} phương tiện ở trong công ty của ${units.size} đơn vị.`);
+  const vehAll = all.filter(f => ALL_ITEMS.some(it => it.vehicle && counted(f, it)));
+  const soon = vehAll.filter(f => { const d = daysLeft(f); return d !== null && d >= 0 && d < 15; }).length;
+  S.push(`Xin báo cáo thêm có ${soon} phương tiện sắp hết hạn đăng kiểm trong 15 ngày tới.`);
+  S.push('Xin trân trọng cảm ơn.');
+  return S;
+}
+
+// ---- Chọn giọng: liệt kê mọi giọng tiếng Việt trên máy, nhớ lựa chọn cho lần sau ----
+const LS_VOICE = 'amo_voice', LS_RATE = 'amo_rate', LS_PITCH = 'amo_pitch';
+const lsG = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
+const lsS = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
+function viVoices() {
+  const vs = ('speechSynthesis' in window) ? speechSynthesis.getVoices() : [];
+  const vi = vs.filter(v => /^vi/i.test(v.lang));
+  // Ưu tiên giọng chất lượng cao: "Nâng cao/Enhanced/Premium", giọng mạng của Google
+  const score = v => (/premium|enhanced|nâng cao|cao cấp/i.test(v.name) ? 3 : 0) + (/google/i.test(v.name) ? 2 : 0) + (v.localService === false ? 1 : 0);
+  return vi.sort((a, b) => score(b) - score(a));
+}
+function fillVoices() {
+  const sel = $('speakVoice'), vs = viVoices(), saved = lsG(LS_VOICE);
+  sel.textContent = '';
+  if (!vs.length) { const o = document.createElement('option'); o.textContent = 'Chưa có giọng tiếng Việt'; o.value = ''; sel.append(o); return; }
+  vs.forEach(v => { const o = document.createElement('option'); o.value = v.name; o.textContent = v.name + (v.localService === false ? ' (online)' : ''); sel.append(o); });
+  if (saved && vs.some(v => v.name === saved)) sel.value = saved;
+}
+function viVoice() {
+  const vs = viVoices(), want = $('speakVoice').value;
+  return vs.find(v => v.name === want) || vs[0] || null;
+}
+if ('speechSynthesis' in window) { speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged = fillVoices; setTimeout(fillVoices, 300); }
+(() => { const r = lsG(LS_RATE), p = lsG(LS_PITCH); if (r) $('speakRate').value = r; if (p) $('speakPitch').value = p; })();
+$('speakVoice').onchange = () => lsS(LS_VOICE, $('speakVoice').value);
+$('speakRate').onchange = () => lsS(LS_RATE, $('speakRate').value);
+$('speakPitch').onchange = () => lsS(LS_PITCH, $('speakPitch').value);
+$('voiceTest').onclick = () => {
+  if (!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance('Xin chào, đây là giọng đọc báo cáo tình hình an ninh.');
+  const v = viVoice(); u.lang = 'vi-VN'; if (v) u.voice = v; u.rate = +$('speakRate').value; u.pitch = +$('speakPitch').value;
+  speechSynthesis.speak(u);
+};
+
+async function speakReport() {
+  const box = $('reportText');
+  if (!('speechSynthesis' in window)) { speakMsg('Trình duyệt này không hỗ trợ đọc bằng giọng nói.'); return; }
+  speechSynthesis.cancel();
+  $('speakBtn').disabled = true;
+  try { await loadCharts(false); } finally { $('speakBtn').disabled = false; }
+  if (!lastAgg) { speakMsg('Chưa đọc được số liệu his.csv để tổng hợp.'); return; }
+  speakMsg('');
+  const sents = buildReport();
+  box.textContent = '';   // nội dung chỉ hiện khi bấm "📄 Chi tiết"
+  const spans = sents.map(t => { const sp = document.createElement('span'); sp.textContent = t + ' '; box.append(sp); return sp; });
+  const voice = viVoice();
+  if (!voice) speakMsg('⚠ Máy chưa có giọng đọc tiếng Việt nên có thể đọc sai. Cài giọng tiếng Việt trong Cài đặt của điện thoại.');
+  const rate = +$('speakRate').value;
+  spans.forEach((sp, i) => {
+    const u = new SpeechSynthesisUtterance(sents[i]);   // đọc từng câu: tránh bị ngắt giữa chừng với đoạn dài
+    u.lang = 'vi-VN'; if (voice) u.voice = voice; u.rate = rate; u.pitch = +$('speakPitch').value;
+    u.onstart = () => { spans.forEach(x => x.classList.remove('now')); sp.classList.add('now'); $('stopBtn').hidden = false; };
+    if (i === spans.length - 1) u.onend = () => { sp.classList.remove('now'); $('stopBtn').hidden = true; };
+    speechSynthesis.speak(u);
+  });
+}
+$('speakBtn').onclick = speakReport;
+function speakMsg(t) { $('speakMsg').textContent = t; $('speakMsg').hidden = !t; }
+// Nút mở/thu: phần chọn giọng và nội dung báo cáo (mặc định ẩn)
+function bindToggle(btn, panel) {
+  $(btn).onclick = () => {
+    const show = $(panel).hidden;
+    $(panel).hidden = !show;
+    $(btn).classList.toggle('on', show);
+    $(btn).setAttribute('aria-expanded', show);
+  };
+}
+bindToggle('toggleVoice', 'voiceBar');
+bindToggle('toggleText', 'reportText');
+$('stopBtn').onclick = () => { speechSynthesis.cancel(); $('stopBtn').hidden = true; document.querySelectorAll('#reportText .now').forEach(x => x.classList.remove('now')); };
+$('chartBox').addEventListener('toggle', () => { if (!$('chartBox').open && 'speechSynthesis' in window) $('stopBtn').click(); });
+
 // Kéo bằng chuột trên máy tính (điện thoại thì vuốt ngón tay sẵn có)
 function enableDragScroll(el) {
   let x0 = null, s0 = 0;
