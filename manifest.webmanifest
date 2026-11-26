@@ -1,6 +1,6 @@
 {
-  "name": "Security System AMO 2",
-  "short_name": "Security AMO 2",
+  "name": "Security System AMO",
+  "short_name": "Security AMO",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
